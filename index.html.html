@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2024年度 明治大学 政治経済 オンライン模擬テスト</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Yu Gothic', 'Meiryo', sans-serif;
+            background: #f5f5f5;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ヘッダー */
+        .header {
+            background: linear-gradient(135deg, #1565c0 0%, #1976d2 100%);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 1.3em;
+        }
+
+        .timer {
+            font-size: 1.5em;
+            font-weight: bold;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 20px;
+            border-radius: 25px;
+        }
+
+        .finish-btn {
+            background: #ff5252;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            font-size: 1em;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .finish-btn:hover {
+            background: #ff1744;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255,82,82,0.4);
+        }
+
+        /* メインコンテナ */
+        .container {
+            display: flex;
+            height: calc(100vh - 60px);
+        }
+
+        /* サイドバー（セクションナビゲーション） */
+        .sidebar {
+            width: 200px;
+            background: white;
+            border-right: 2px solid #e0e0e0;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .sidebar h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+            font-size: 1em;
+        }
+
+        .section-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .section-nav-item {
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: bold;
+            background: white;
+            text-align: center;
+        }
+
+        .section-nav-item:hover {
+            border-color: #1976d2;
+            background: #e3f2fd;
+        }
+
+        .section-nav-item.current {
+            background: #1976d2;
+            color: white;
+            border-color: #1976d2;
+        }
+
+        /* 試験エリア（2カラム） */
+        .exam-area {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* 左カラム：本文 */
+        .passage-column {
+            background: #f8f9fa;
+            padding: 30px;
+            overflow-y: auto;
+            border-right: 2px solid #e0e0e0;
+        }
+
+        .passage-header {
+            background: linear-gradient(135deg, #1565c0 0%, #1976d2 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px 8px 0 0;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 0;
+        }
+
+        .passage-content {
+            background: white;
+            padding: 25px;
+            border-radius: 0 0 8px 8px;
+            line-height: 2;
+            font-size: 1.05em;
+        }
+
+        /* 右カラム：問題 */
+        .questions-column {
+            background: white;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .questions-container {
+            max-width: 700px;
+        }
+
+        .question-item {
+            background: #f8f9fa;
+            border-left: 4px solid #1976d2;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 4px;
+        }
+
+        .question-title {
+            font-weight: bold;
+            color: #1976d2;
+            margin-bottom: 12px;
+            font-size: 1.05em;
+        }
+
+        .question-text {
+            font-size: 1em;
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 15px;
+            white-space: pre-line;
+        }
+
+        .passage {
+            margin-bottom: 15px;
+            line-height: 2;
+        }
+
+        .passage p {
+            margin-bottom: 15px;
+        }
+
+        .options {
+            margin: 15px 0;
+        }
+
+        .option {
+            margin: 8px 0;
+            padding: 10px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            background: white;
+        }
+
+        .option:hover {
+            border-color: #1976d2;
+            background: #e3f2fd;
+        }
+
+        .option input[type="radio"],
+        .option input[type="checkbox"] {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .option.selected {
+            border-color: #1976d2;
+            background: #e3f2fd;
+        }
+
+        .option label {
+            cursor: pointer;
+            flex: 1;
+            line-height: 1.6;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: #1976d2;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .char-counter {
+            text-align: right;
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        /* ナビゲーションボタン */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .nav-btn {
+            background: #1976d2;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1em;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background: #1565c0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(25,118,210,0.3);
+        }
+
+        .nav-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .blank-label {
+            display: inline-block;
+            min-width: 35px;
+            padding: 3px 10px;
+            border: 2px solid #1976d2;
+            background: #fff;
+            text-align: center;
+            font-weight: bold;
+            color: #1976d2;
+            margin: 0 3px;
+            border-radius: 4px;
+        }
+
+        .underline-num {
+            position: relative;
+            border-bottom: 2px solid #1976d2;
+            padding-bottom: 2px;
+            padding-left: 25px;
+        }
+
+        .underline-num::before {
+            content: attr(data-num);
+            position: absolute;
+            top: -8px;
+            left: 0;
+            background: #1976d2;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75em;
+            font-weight: bold;
+        }
+
+        /* 結果画面 */
+        .result-screen {
+            display: none;
+            padding: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            overflow-y: auto;
+            height: 100%;
+        }
+
+        .result-header {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .result-header h2 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .result-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .stat-item {
+            background: rgba(255,255,255,0.2);
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 180px;
+            }
+
+            .question-nav {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .result-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ヘッダー -->
+    <div class="header">
+        <h1>📚 2024年度 明治大学 情報コミュニケーション学部 政治経済</h1>
+        <div class="timer" id="timer">⏱ 60:00</div>
+        <button class="finish-btn" onclick="confirmFinish()">試験を終了</button>
+    </div>
+
+    <!-- メインコンテナ -->
+    <div class="container">
+        <!-- サイドバー（セクション選択） -->
+        <div class="sidebar">
+            <h3>セクション</h3>
+            <div class="section-nav" id="sectionNav"></div>
+        </div>
+
+        <!-- 試験エリア（2カラム） -->
+        <div class="exam-area" id="examArea">
+            <!-- 左カラム：本文 -->
+            <div class="passage-column" id="passageColumn">
+                <!-- 本文がここに表示されます -->
+            </div>
+
+            <!-- 右カラム：問題 -->
+            <div class="questions-column" id="questionsColumn">
+                <div class="questions-container" id="questionsContainer">
+                    <!-- 問題がここに表示されます -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 結果画面 -->
+        <div class="result-screen" id="resultScreen">
+            <!-- 結果がここに表示されます -->
+        </div>
+    </div>
+
+    <script>
+        // セクションデータ（本文と問題をグループ化）
+        const sections = [
+            {
+                id: 'section1',
+                title: '[I] 戦後の国際情勢と日本',
+                passage: `
+                    <p>1945年2月、第二次世界大戦後の世界秩序についてアメリカ、イギリス、ソ連の首脳は<span class="underline-num" data-num="①">ヤルタ会談</span>を開いて話し合った。<span class="underline-num" data-num="②">国際連合</span>が1945年10月に正式に発足したが、ヤルタ会談ですでに現れていた国家間の対立は、第二次世界大戦後にアメリカとソ連という二つの超大国を軸にした東西陣営の対立へと発展し、冷戦が始まった。</p>
+
+                    <p>西側ではアメリカが1947年に、共産主義封じ込めを狙ったトルーマン・ドクトリンを発表したのに続いて、ヨーロッパの経済復興を助けるための<span class="blank-label">ア</span>を発表した。そして、1949年には集団的安全保障のためアメリカと西欧諸国によって<span class="underline-num" data-num="③">NATO</span>が結成された。</p>
+
+                    <p>東側ではソ連の影響力の下、東欧の国々が相次いで社会主義化され、1947年にコミンフォルムが組織され、1949年に経済的結束を固めるため<span class="blank-label">イ</span>が結成された。ドイツが東西に分かれて、西ドイツがNATOに加盟すると、ソ連と東側諸国は東ドイツを加えた軍事同盟のワルシャワ条約機構を設立して西側陣営と対立した。1961年には東・西ドイツの分断と冷戦の象徴である<span class="blank-label">ウ</span>が建設された。東西両陣営のどちらも核抑止論を唱え、軍備を拡張し、米・ソは核実験を行い、核兵器の保有量と高性能化を競い合った。しかし、1954年にアメリカの水爆実験のため日本の漁船員が死亡した<span class="blank-label">エ</span>事件が起きたことにより、核兵器の脅威が再認識され、1955年に<span class="underline-num" data-num="④">第1回原水爆禁止世界大会</span>が開かれた。また、1962年には、地理的にアメリカのすぐ近くで<span class="blank-label">オ</span>が起き、米・ソ間の核戦争が懸念されたが回避された。これを教訓として米・ソ首脳間にホットラインが結ばれた。<span class="blank-label">オ</span>の後、核実験や核開発を制限する動きも始まった。ヨーロッパでは、地域の緊張緩和と相互の安全保障を討議するため、1975年にヘルシンキで<span class="blank-label">カ</span>が開かれた。</p>
+
+                    <p>同時期の日本および日本の周辺国の動きに目を向けると、1949年に<span class="underline-num" data-num="⑥">中華人民共和国</span>が成立し、1950年に<span class="blank-label">キ</span>が勃発した。戦後の日本は連合国軍の占領下におかれたが、米・ソの緊張が強まり、<span class="blank-label">キ</span>が起きたことによって、アメリカの対日占領政策は大きな転換点を迎えた。1950年に連合国軍最高司令官総司令部(GHQ)の指令により、日本に警察予備隊が作られた。1952年に警察予備隊は保安隊へ改組され、1954年の<span class="blank-label">ク</span>協定の締結により、日本は防衛力の増強を強く求められた。これを受けて、自衛隊法の制定により、自衛隊が発足した。1951年に日本は主に西側諸国との間に<span class="blank-label">ケ</span>を締結して独立を回復し国際社会に復帰した。ソ連とは1956年に<span class="underline-num" data-num="⑦">日ソ共同宣言</span>で国交を回復し、日本は国際連合への加盟を果たした。また、<span class="blank-label">ケ</span>と同時に結ばれた<span class="underline-num" data-num="⑧">日米安全保障条約(安保条約)</span>によって、アメリカ軍の日本駐留が認められた。1960年に安保条約の大幅な改定が行われ、現行の新安保条約が成立した。この改定にあたり、米軍の配置や装備の重要な変更、日本からの戦闘作戦行動、日本国内へ核兵器を持ち込む場合などには日米間での<span class="blank-label">コ</span>を行うことが定められた。日本国憲法第9条は、<span class="underline-num" data-num="⑨">憲法前文</span>の趣旨を踏まえ、戦争の放棄、戦力の不保持、交戦権の否認などを定めている。このことから、<span class="underline-num" data-num="⑩">自衛隊や安保条約</span>に対しては、合憲・違憲を争った裁判も行われた。</p>
+                `,
+                questions: []  // 後で問題を追加
+            },
+            {
+                id: 'section2',
+                title: '[II] スタートアップと資金調達',
+                passage: `
+                    <p>近年、スタートアップ支援は国の重要なイノベーション促進政策のひとつとなっている。スタートアップは、新たなビジネスを創出するうえでのシーズを提供する主体として期待されている。他方で、スタートアップは大企業に比べて、ヒト・モノ・カネ・情報といった経営資源の制約が厳しく、それらの確保が事業を続けるうえで大きな課題となっていることが多い。特に<span class="underline-num" data-num="①">資金調達</span>は、事業の継続に直接的な影響を及ぼすと考えられる。</p>
+
+                    <p>資金調達の手段としては、株式や社債を発行して調達する<span class="blank-label">ア</span>と、銀行等からの融資を受ける<span class="blank-label">イ</span>がある。企業が内部留保や株式発行によって調達した資金を<span class="blank-label">ウ</span>、社債発行や金融機関からの借り入れ等によって調達した資金を<span class="blank-label">エ</span>という。</p>
+
+                    <p>このうち、<span class="blank-label">ア</span>に関して、株式市場で株式を売買できるようになるには、継続性や収益性など、証券取引所等の課す上場基準を満たす必要がある。また、株主をはじめ顧客・従業員・地域社会等の立場を踏まえたうえで、透明・公正かつ迅速・果断な意思決定を行うための仕組みであり、企業経営を監視するための仕組みとも捉えられる<span class="blank-label">①</span>の実効性なども求められる。設立間もないスタートアップが、こうした上場基準をすべて満たすことは、経営資源の観点からも比較的難しいと考えられる。さらに、投資家や銀行にとっても、スタートアップへの投資や貸付は、事業上の不確実性が高く、大きなリスクを伴う。そこで、こうしたスタートアップの資金調達には、未上場企業に対して出資を行う<span class="blank-label">②</span>と呼ばれる投資会社が重要な役割を果たすことが多い。なお、近年では、金融機関による貸出に際して、借り手の返済能力を推定するAIの活用も進んでいる。</p>
+
+                    <p>なお、高度成長期の日本においては、<span class="blank-label">イ</span>での資金調達が支配的であった。そこでは、<span class="blank-label">オ</span>制度と呼ばれるような、企業と主要な取引先銀行とが深く安定的な関係性を構築する慣習が成立していた。この制度の下では、企業が主要取引先銀行から役員派遣を受け入れたり、融資先企業の経営が悪化した際には主要取引先銀行が積極的に経営に関与したりするといったことが行われていた。現在では、日本においても株式市場での資金調達が、全体としてもっとも調達額の大きい手段となっている。</p>
+
+                    <p>ここで、銀行は貸付利率と預金利率の差から主な収益をあげている。そして、この利率は金融政策によっても大きく影響を受ける。日本銀行は、金利の誘導目標を定め、公開市場操作等を通じて、自ら供給する通貨量である<span class="underline-num" data-num="③">マネタリーベース</span>を調節し、家計や一般法人、地方公共団体などが保有する通貨量であるマネーストックに影響を与え、目標金利への誘導を行う。このとき、政策金利の誘導対象となっているのは<span class="blank-label">カ</span>である。</p>
+                `,
+                questions: []
+            },
+            {
+                id: 'section3',
+                title: '[III] 日本の国債',
+                passage: `
+                    <p>日本において、国の歳出を国債発行でまかなうことの原則禁止を定めた<span class="blank-label">ア</span>法が1947年から施行されている。ただし、第<span class="blank-label">イ</span>条では、<span class="blank-label">ウ</span>などに限って、国債発行が認められており、このような国債は、建設国債と呼ばれている。</p>
+
+                    <p>人件費などの経常支出については、国債発行でまかなうことは原則禁止されているものの、1975年から特例法を制定すれば、国債発行が可能となった。このような国債は、特例国債もしくは<span class="blank-label">①</span>国債と呼ばれている。</p>
+
+                    <p>日本銀行による国債の引き受けも原則禁止されており、これは、国債の<span class="blank-label">②</span>の原則と呼ばれている。ただし、特別の事由がある場合において、国会の議決を経た金額の範囲内では可能となっている。</p>
+
+                    <p>2022年度における国の一般会計の当初予算の歳出の内訳をみると、もっとも大きな比率を占めるのが、<span class="blank-label">エ</span>である。2番目に大きな比率を占めるのが、これまでの借金の元本の償還や利払いに相当する<span class="blank-label">オ</span>である。3番目に大きな比率を占めるのが、<span class="blank-label">カ</span>である。</p>
+
+                    <p>都道府県や市町村などの地方公共団体は、地方税で支出のすべてをまかなえないので、不足分は、国から補助金の支給を受けたり、<span class="blank-label">③</span>を発行して、借金をしている。市町村の税の中で、主たる税の1つが、<span class="blank-label">④</span>であり、土地や家屋などの評価額に応じた課税がなされている。</p>
+                `,
+                questions: []
+            }
+        ];
+
+        // 問題データ（完全版 - すべての問題を含む）
+        const questions = [
+            // ========== セクション I: 戦後の国際情勢と日本 ==========
+            // 問1の空欄問題（ア〜コ）
+            {
+                id: 'q1-a',
+                type: '記述式',
+                section: 'I',
+                title: '[I] 問1-ア',
+                question: '本文中の空欄【ア】に当てはまる語句を解答欄に記入しなさい。',
+                answer: 'マーシャル・プラン'
+            },
+            {
+                id: 'q1-i',
+                type: '記述式',
+                section: 'I',
+                title: '[I] 問1-イ',
+                question: '本文中の空欄【イ】に当てはまる語句を解答欄に記入しなさい。',
+                answer: 'コメコン'
+            },
+            {
+                id: 'q1-u',
+                type: '記述式',
+                section: 'I',
+                title: '[I] 問1-ウ',
+                question: '本文中の空欄【ウ】に当てはまる語句を解答欄に記入しなさい。',
+                answer: 'ベルリンの壁'
+            },
+            {
+                id: 'q1-e',
+                type: '記述式',
+                section: 'I',
+                title: '[I] 問1-エ',
+                question: '本文中の空欄【エ】に当てはまる語句を解答欄に記入しなさい。',
+                answer: '第五福竜丸'
+            },
+            {
+                id: 'q1-o',
+                type: '記述式',
+                section: 'I',
+                title: '[I] 問1-オ',
+                question: '本文中の空欄【オ】に当てはまる語句を解答欄に記入しなさい。',
+                answer: 'キューバ危機'
+            },
+            {
+                id: 'q1-ka',
+                type: '記述式',
+                section: 'I',
+                title: '[I] 問1-カ',
+                question: '本文中の空欄【カ】に当てはまる語句を解答欄に記入しなさい。',
+                answer: '全欧安全保障協力会議'
+            },
+            {
+                id: 'q1-ki',
+                type: '記述式',
+                section: 'I',
+                title: '[I] 問1-キ',
+                question: '本文中の空欄【キ】に当てはまる語句を解答欄に記入しなさい。',
+                answer: '朝鮮戦争'
+            },
+            {
+                id: 'q1-ku',
+                type: '記述式',
+                section: 'I',
+                title: '[I] 問1-ク',
+                question: '本文中の空欄【ク】に当てはまる語句を解答欄に記入しなさい。',
+                answer: 'MSA協定'
+            },
+            {
+                id: 'q1-ke',
+                type: '記述式',
+                section: 'I',
+                title: '[I] 問1-ケ',
+                question: '本文中の空欄【ケ】に当てはまる語句を解答欄に記入しなさい。',
+                answer: 'サンフランシスコ平和条約'
+            },
+            {
+                id: 'q1-ko',
+                type: '記述式',
+                section: 'I',
+                title: '[I] 問1-コ',
+                question: '本文中の空欄【コ】に当てはまる語句を解答欄に記入しなさい。',
+                answer: '事前協議'
+            },
+            {
+                id: 'q2',
+                type: '選択式',
+                section: 'I',
+                title: '[I] 問2: ヤルタ会談の首脳',
+                question: '下線部①のヤルタ会談に臨んだアメリカ・イギリス・ソ連の首脳の3人の名前の組み合わせとしてもっとも適切なものを1つ選び、そのアルファベットを解答欄にマークしなさい。',
+                options: [
+                    { value: 'A', label: '(米)ケネディ、(英)チャーチル、(ソ)スターリン' },
+                    { value: 'B', label: '(米)アイゼンハワー、(英)イーデン、(ソ)フルシチョフ' },
+                    { value: 'C', label: '(米)ローズベルト、(英)イーデン、(ソ)フルシチョフ' },
+                    { value: 'D', label: '(米)ローズベルト、(英)チャーチル、(ソ)スターリン' }
+                ],
+                answer: 'D'
+            },
+            {
+                id: 'q3',
+                type: '選択式',
+                section: 'I',
+                title: '[I] 問3: 安保理の説明',
+                question: '下線部②に関連して、国際連合の主要機関である安全保障理事会（安保理）について説明した記述として、その内容が適切でないものを1つ選び、そのアルファベットを解答欄にマークしなさい。',
+                options: [
+                    { value: 'A', label: '安保理は5常任理事国と10非常任理事国の計15か国で構成される。' },
+                    { value: 'B', label: '安保理の常任理事国は、手続き事項以外のすべての事項について拒否権を持っている。' },
+                    { value: 'C', label: '安保理は国際平和と安全の維持に関して責任を負うため、軍事的措置を決定する場合には、総会の事前承認を得なければならない。' },
+                    { value: 'D', label: '2022年のロシアによるウクライナ侵攻では、ロシアによる拒否権行使によって安保理が有効に機能しなかった。' }
+                ],
+                answer: 'C'
+            },
+            {
+                id: 'q4',
+                type: '記述式',
+                section: 'I',
+                title: '[I] 問4: NATOの正式名称',
+                question: '下線部③のNATOとは何の略か。漢字で解答欄に記入しなさい。',
+                answer: '北大西洋条約機構'
+            },
+            {
+                id: 'q5',
+                type: '選択式',
+                section: 'I',
+                title: '[I] 問5: NATOに関する記述',
+                question: '下線部③に関連した記述として、その内容が適切でないものを1つ選び、そのアルファベットを解答欄にマークしなさい。',
+                options: [
+                    { value: 'A', label: '冷戦終結後、ポーランドなど旧東側諸国の一部もNATOに加盟し、NATOの東方拡大が進んでいる。' },
+                    { value: 'B', label: '冷戦終結後、日本やオーストラリアも新たにNATOに加盟した。' },
+                    { value: 'C', label: 'NATOは加盟国の一つが武力攻撃を受けた場合、それをすべての加盟国への攻撃とみなし、攻撃された国を援助して共同で防衛する権利を認めている。' },
+                    { value: 'D', label: '2022年にロシアがウクライナに軍事侵攻すると、NATO諸国がウクライナ支援に乗り出した。' }
+                ],
+                answer: 'B'
+            },
+            {
+                id: 'q6',
+                type: '選択式',
+                section: 'I',
+                title: '[I] 問6: 原水爆禁止世界大会の開催地',
+                question: '下線部④に関連して、第1回原水爆禁止世界大会の開催地はどこか。もっとも適切な地名を1つ選び、そのアルファベットを解答欄にマークしなさい。',
+                options: [
+                    { value: 'A', label: '広島' },
+                    { value: 'B', label: '長崎' },
+                    { value: 'C', label: 'ストックホルム' },
+                    { value: 'D', label: 'ニューヨーク' }
+                ],
+                answer: 'A'
+            },
+            {
+                id: 'q7',
+                type: '複数選択式',
+                section: 'I',
+                title: '[I] 問7: 核兵器廃絶と軍縮（複数選択）',
+                question: '下線部⑤に関連して、核兵器の廃絶と軍縮の動きに関する記述として、その内容が適切でないものをすべて選び、そのアルファベットを解答欄にマークしなさい。',
+                options: [
+                    { value: 'A', label: '部分的核実験禁止条約(PTBT)は、大気圏内、宇宙空間および水中の核実験を禁止した。' },
+                    { value: 'B', label: '包括的核実験禁止条約(CTBT)は、地下核実験を含む一切の核実験を禁止するものだが、核保有国のアメリカや中国などの批准が完了していないため未発効である。' },
+                    { value: 'C', label: '核拡散防止条約(NPT)は、核兵器の保有国を増加させないことを目的としており、加盟する非核保有国は、国際原子力機関の核査察の受け入れを条件に、原子力の平和的な利用が認められている。' },
+                    { value: 'D', label: '核兵器禁止条約は、核兵器の製造や保有、使用だけでなく使用の威嚇も禁止するもので、被爆国日本も批准している。' }
+                ],
+                answer: 'D',
+                multiSelect: true
+            },
+            {
+                id: 'q8',
+                type: '選択式',
+                section: 'I',
+                title: '[I] 問8: 中国に関する記述',
+                question: '下線部⑥に関連して、中華人民共和国(中国)に関する記述として、その内容が適切でないものを1つ選び、そのアルファベットを解答欄にマークしなさい。',
+                options: [
+                    { value: 'A', label: '中国では国家の最高機関は立法府である全国人民代表大会と規定されている。' },
+                    { value: 'B', label: '日中共同声明では、日本は中華人民共和国を唯一の合法政府と認め、中国は戦争賠償の請求を放棄した。' },
+                    { value: 'C', label: '中国と日本の間には、竹島をめぐり領土問題がある。' },
+                    { value: 'D', label: '中国では1993年に社会主義市場経済が憲法に明記された。' }
+                ],
+                answer: 'C'
+            },
+            {
+                id: 'q9',
+                type: '記述式',
+                section: 'I',
+                title: '[I] 問9: 北方領土の2島',
+                question: '下線部⑦に関連して、北方領土のうち、日ソ共同宣言で平和条約締結後に日本に返還すると約束された2島の名前を漢字で解答欄に記入しなさい。',
+                answer: '歯舞群島と色丹島'
+            },
+            {
+                id: 'q10',
+                type: '論述（30字）',
+                section: 'I',
+                title: '[I] 問10: 思いやり予算',
+                question: '下線部⑧に関連して、「思いやり予算」とは何を意味するか、30字以内で解答欄に記入しなさい。',
+                maxLength: 30,
+                answer: '在日米軍の駐留経費のうち、日本側が負担する経費。',
+                essayGrading: {
+                    maxScore: 5,
+                    requiredKeywords: ['在日米軍', '駐留', '経費', '負担', '日本'],
+                    optionalKeywords: ['光熱費', '給与', '基地'],
+                    minLength: 20
+                }
+            },
+            {
+                id: 'q11',
+                type: '記述式',
+                section: 'I',
+                title: '[I] 問11: 憲法前文の空欄（共通）',
+                question: '下線部⑩に関連して、下記の日本国憲法前文の一部の空欄に入る語句を解答欄に記入しなさい。（空欄に入る語句はすべて共通）\n\n「日本国民は、恒久の【　】を念願し、人間相互の関係を支配する崇高な理想を深く自覚するのであって、【　】を愛する諸国民の公正と信義に信頼して、われらの安全と生存を保持しようと決意した。われらは、【　】を維持し、専制と隷従、圧迫と偏狭を地上から永遠に除去しようと努めてある国際社会において、名誉ある地位を占めたいと思う。われらは、全世界の国民が、ひとしく恐怖と欠乏から免かれ、【　】のうちに生存する権利を有することを確認する。」',
+                answer: '平和'
+            },
+            {
+                id: 'q12',
+                type: '選択式',
+                section: 'I',
+                title: '[I] 問12: 自衛隊合憲性の裁判',
+                question: '下線部⑩に関連して、自衛隊の合憲・違憲を争った裁判として、適切でないものを1つ選び、そのアルファベットを解答欄にマークしなさい。',
+                options: [
+                    { value: 'A', label: '恵庭事件' },
+                    { value: 'B', label: '長沼ナイキ基地訴訟' },
+                    { value: 'C', label: '百里基地訴訟' },
+                    { value: 'D', label: '砂川事件' }
+                ],
+                answer: 'A'
+            },
+
+            // ========== セクション II: スタートアップと資金調達 ==========
+            {
+                id: 'q2-1',
+                type: '選択肢記述式',
+                section: 'II',
+                title: '[II] 問1',
+                question: '文中のアからカの空欄に当てはまるもっとも適切な語句を、以下の選択肢から1つずつ選び、そのアルファベットを解答欄にそれぞれ記入しなさい。\n\n【選択肢】\nA. 有限資本　　　　B. 無限資本\nC. 自己資本　　　　D. 他人資本\nE. 証券金融　　　　F. 株式金融\nG. 直接金融　　　　H. 間接金融\nI. 監査役　　　　　J. 持株会社\nK. 合資会社　　　　L. 指名委員会\nM. 護送船団　　　　N. BIS\nO. CSR　　　　　　P. メインバンク\nQ. セカンドバンク　R. ディスクロージャー\nS. コンプライアンス　T. 無担保コール翌日物レート\nU. オペレーション　V. 公定歩合',
+                blanks: [
+                    { id: 'q2-1-a', label: 'ア', answer: 'G' },
+                    { id: 'q2-1-i', label: 'イ', answer: 'H' },
+                    { id: 'q2-1-u', label: 'ウ', answer: 'C' },
+                    { id: 'q2-1-e', label: 'エ', answer: 'D' },
+                    { id: 'q2-1-o', label: 'オ', answer: 'P' },
+                    { id: 'q2-1-ka', label: 'カ', answer: 'T' }
+                ]
+            },
+            {
+                id: 'q2-2-1',
+                type: '記述式（カタカナ）',
+                section: 'II',
+                title: '[II] 問2-①',
+                question: '本文中の空欄①に当てはまる語句をカタカナで解答欄に記入しなさい。',
+                answer: 'コーポレートガバナンス'
+            },
+            {
+                id: 'q2-2-2',
+                type: '記述式（カタカナ）',
+                section: 'II',
+                title: '[II] 問2-②',
+                question: '本文中の空欄②に当てはまる語句をカタカナで解答欄に記入しなさい。',
+                answer: 'ベンチャーキャピタル'
+            },
+            {
+                id: 'q2-2-3',
+                type: '記述式（カタカナ）',
+                section: 'II',
+                title: '[II] 問2-③',
+                question: '下線部③の語句をカタカナで解答欄に記入しなさい。',
+                answer: 'マネタリーベース'
+            },
+            {
+                id: 'q2-3',
+                type: '選択式',
+                section: 'II',
+                title: '[II] 問3: 日米の資金調達構成',
+                question: '下線部①に関連して、2022年3月末時点における民間非金融法人企業の金融負債構成について、日本と米国の借入と株式等のおよそその比率の組み合せのうち、もっとも適切なものを選択肢から1つ選び、そのアルファベットを解答欄にマークしなさい。',
+                options: [
+                    { value: 'A', label: '日本：借入 5 %、株式等 73 % ／ 米国：借入 6 %、株式等 41 %' },
+                    { value: 'B', label: '日本：借入 5 %、株式等 73 % ／ 米国：借入 6 %、株式等 71 %' },
+                    { value: 'C', label: '日本：借入 25 %、株式等 53 % ／ 米国：借入 6 %、株式等 71 %' },
+                    { value: 'D', label: '日本：借入 25 %、株式等 53 % ／ 米国：借入 26 %、株式等 31 %' },
+                    { value: 'E', label: '日本：借入 45 %、株式等 33 % ／ 米国：借入 45 %、株式等 41 %' },
+                    { value: 'F', label: '日本：借入 45 %、株式等 53 % ／ 米国：借入 26 %、株式等 41 %' }
+                ],
+                answer: 'F'
+            },
+            {
+                id: 'q2-4',
+                type: '計算問題',
+                section: 'II',
+                title: '[II] 問4: 信用創造額の計算',
+                question: '下線部②に関連して、銀行が預金の受け入れと貸し出しを繰り返すことで、銀行全体で最初の預金額を大きく上回る預金通貨を創造することができる。今、支払(預金)準備率が10%であり、本源的預金が300億円であるとする。各銀行は支払(預金)準備額を除いたすべての預金額を貸し付けに回すものとする。このときの信用創造額を求め、その数値を解答欄に記入しなさい。\n\n※億円単位で数値のみを解答してください',
+                answer: '2700'
+            },
+            {
+                id: 'q2-5',
+                type: '選択式',
+                section: 'II',
+                title: '[II] 問5: M1の構成要素',
+                question: '下線部③に関連して、以下の選択肢のうちM1を構成する要素としてもっとも適切なものを1つ選び、そのアルファベットを解答欄にマークしなさい。',
+                options: [
+                    { value: 'A', label: '現金通貨' },
+                    { value: 'B', label: '現金通貨 + 預金通貨' },
+                    { value: 'C', label: '現金通貨 + 預金通貨 + 譲渡性預金' },
+                    { value: 'D', label: '預金通貨 + 譲渡性預金' },
+                    { value: 'E', label: '現金通貨 + 準通貨' },
+                    { value: 'F', label: '現金通貨 + 預金通貨 + 準通貨 + 譲渡性預金' }
+                ],
+                answer: 'B'
+            },
+
+            // ========== セクション III: 日本の国債 ==========
+            {
+                id: 'q3-1',
+                type: '選択肢記述式',
+                section: 'III',
+                title: '[III] 問1',
+                question: '文中のアからカの空欄に当てはまるもっとも適切な語句や数字を選択肢から選び、そのアルファベットを解答欄にそれぞれ記入しなさい。\n\n【選択肢】\n【ア】A. 公債　B. 歳入　C. 財政　D. 会計　E. 国税\n【イ】A. 1　B. 2　C. 3　D. 4　E. 5\n【ウ】A. 防衛力整備費　B. 継続費　C. 繰越明許費　D. 科学技術振興費　E. 公共事業費\n【エ】A. 社会保険費　B. 社会福祉費　C. 社会保障関係費　D. 地方交付税交付金等　E. 公債管理費\n【オ】A. 国債費　B. 公債金　C. 債務関係費　D. 国債整理費　E. 公債管理費\n【カ】A. 社会保険費　B. 社会福祉費　C. 社会保障関係費　D. 地方交付税交付金等　E. 公共事業関係費',
+                blanks: [
+                    { id: 'q3-1-a', label: 'ア', answer: 'C' },
+                    { id: 'q3-1-i', label: 'イ', answer: 'D' },
+                    { id: 'q3-1-u', label: 'ウ', answer: 'E' },
+                    { id: 'q3-1-e', label: 'エ', answer: 'C' },
+                    { id: 'q3-1-o', label: 'オ', answer: 'A' },
+                    { id: 'q3-1-ka', label: 'カ', answer: 'D' }
+                ]
+            },
+            {
+                id: 'q3-2-1',
+                type: '記述式',
+                section: 'III',
+                title: '[III] 問2-①',
+                question: '本文中の空欄①に当てはまる語句を解答欄に記入しなさい。',
+                answer: '赤字'
+            },
+            {
+                id: 'q3-2-2',
+                type: '記述式',
+                section: 'III',
+                title: '[III] 問2-②',
+                question: '本文中の空欄②に当てはまる語句を解答欄に記入しなさい。',
+                answer: '市場消化'
+            },
+            {
+                id: 'q3-2-3',
+                type: '記述式（漢字3文字）',
+                section: 'III',
+                title: '[III] 問2-③',
+                question: '本文中の空欄③に当てはまる語句を漢字3文字で解答欄に記入しなさい。',
+                answer: '地方債'
+            },
+            {
+                id: 'q3-2-4',
+                type: '記述式',
+                section: 'III',
+                title: '[III] 問2-④',
+                question: '本文中の空欄④に当てはまる語句を解答欄に記入しなさい。',
+                answer: '固定資産税'
+            },
+            {
+                id: 'q3-3',
+                type: '論述（70字）',
+                section: 'III',
+                title: '[III] 問3: 建設国債の容認理由',
+                question: '建設国債については、国債発行が容認されているが、その理由を述べなさい。句読点を含めて、70字以内で解答欄に記入しなさい。',
+                maxLength: 70,
+                answer: '建設国債で建設された社会資本は将来世代も利用するため、将来世代にも負担を求めることが世代間の公平の観点から妥当だから。',
+                essayGrading: {
+                    maxScore: 10,
+                    requiredKeywords: ['社会資本', '将来', '世代', '負担', '公平'],
+                    optionalKeywords: ['公共事業', '利用', '利益', '世代間'],
+                    minLength: 50
+                }
+            },
+            {
+                id: 'q3-4',
+                type: '論述（70字）',
+                section: 'III',
+                title: '[III] 問4: 地方交付税と国庫支出金の違い',
+                question: '地方公共団体に対する国の主な補助金として、地方交付税交付金と国庫支出金があるが、この2つの補助金の違いを使い道の点から説明しなさい。句読点を含めて、70字以内で解答欄に記入しなさい。',
+                maxLength: 70,
+                answer: '地方交付税交付金は使途が自由だが、国庫支出金は使途が特定されており国の施策に従って使用しなければならない。',
+                essayGrading: {
+                    maxScore: 10,
+                    requiredKeywords: ['使途', '地方交付税', '国庫支出金'],
+                    optionalKeywords: ['自由', '特定', '施策', '限定', '一般財源'],
+                    minLength: 40
+                }
+            }
+        ];
+
+        // 解説データ
+        const explanations = {
+            // セクション I の解説
+            'q1-a': '【解説】マーシャル・プラン（欧州復興計画）は1947年、米国務長官マーシャルが提唱したヨーロッパ経済復興援助計画です。',
+            'q1-i': '【解説】コメコン（経済相互援助会議、COMECON）は1949年、ソ連と東欧諸国による経済協力機構として設立されました。',
+            'q1-u': '【解説】ベルリンの壁は1961年に東ドイツによって建設され、東西ベルリンを分断しました。冷戦の象徴とされました。',
+            'q1-e': '【解説】第五福竜丸事件（1954年）では、ビキニ環礁での米国の水爆実験により、日本のマグロ漁船の乗組員が被爆しました。',
+            'q1-o': '【解説】キューバ危機（1962年）は、ソ連がキューバにミサイル基地を建設しようとしたことで米ソ間の緊張が極度に高まった事件です。',
+            'q1-ka': '【解説】全欧安全保障協力会議（CSCE）は1975年にヘルシンキで開催され、東西の緊張緩和（デタント）を促進しました。',
+            'q1-ki': '【解説】朝鮮戦争（1950-1953年）は、北朝鮮が韓国に侵攻して始まり、米国などが韓国を支援しました。',
+            'q1-ku': '【解説】MSA協定（日米相互防衛援助協定）は1954年に締結され、日本の防衛力増強を促しました。',
+            'q1-ke': '【解説】サンフランシスコ平和条約（1951年調印、1952年発効）により、日本は主権を回復し独立しました。',
+            'q1-ko': '【解説】事前協議制度は、米軍の重要な変更について日米間で協議することを定めたものです。',
+            'q2': '【解説】ヤルタ会談（1945年2月）に参加したのは、米国大統領フランクリン・ローズベルト、英国首相ウィンストン・チャーチル、ソ連最高指導者ヨシフ・スターリンの3名です。',
+            'q3': '【解説】正解はC。安保理が軍事的措置を決定する際、総会の事前承認は不要です。安保理は独自に決定できます。',
+            'q4': '【解説】NATOは北大西洋条約機構（North Atlantic Treaty Organization）の略称です。',
+            'q5': '【解説】正解はB。日本やオーストラリアはNATOに加盟していません。NATOは北大西洋地域の集団安全保障機構です。',
+            'q6': '【解説】正解はA。第1回原水爆禁止世界大会は1955年に広島で開催されました。第五福竜丸事件をきっかけに開催されました。',
+            'q7': '【解説】正解はD。核兵器禁止条約について、日本は批准していません。被爆国でありながら批准しないことが国際的に批判されています。',
+            'q8': '【解説】正解はC。竹島は日本と韓国の間の領土問題です。中国との領土問題は尖閣諸島です。',
+            'q9': '【解説】日ソ共同宣言（1956年）では、平和条約締結後に歯舞群島と色丹島を日本に引き渡すことが合意されました。',
+            'q10': '【模範解答】在日米軍の駐留経費のうち、日本側が負担する経費。\n【解説】思いやり予算は、在日米軍基地の光熱費や従業員の給与など、本来は米国が負担すべき経費を日本が負担するものです。',
+            'q11-1': '【解説】日本国憲法前文では「平和」という語が繰り返し使われており、平和主義の理念が示されています。',
+            'q11-2': '【解説】日本国憲法前文では「平和」という語が繰り返し使われており、平和主義の理念が示されています。',
+            'q11-3': '【解説】日本国憲法前文では「平和」という語が繰り返し使われており、平和主義の理念が示されています。',
+            'q11-4': '【解説】日本国憲法前文では「平和」という語が繰り返し使われており、平和主義の理念が示されています。',
+            'q12': '【解説】正解はA。恵庭事件では、最高裁は自衛隊の合憲性について判断を回避しました。',
+
+            // セクション II の解説
+            'q2-1-a': '【解説】株式や社債を発行して調達する方法は直接金融です。',
+            'q2-1-i': '【解説】銀行等からの融資を受ける方法は間接金融です。',
+            'q2-1-u': '【解説】内部留保や株式発行による資金は自己資本です。',
+            'q2-1-e': '【解説】社債発行や借入による資金は他人資本です。',
+            'q2-1-o': '【解説】メインバンク制度は、企業と主要取引銀行が長期的な関係を築く日本の慣習でした。',
+            'q2-1-ka': '【解説】無担保コール翌日物レートは、日銀の金融政策の誘導目標金利です。',
+            'q2-2-1': '【解説】コーポレートガバナンス（企業統治）は、企業経営の透明性と公正性を確保する仕組みです。',
+            'q2-2-2': '【解説】ベンチャーキャピタルは、未上場企業に投資する投資会社です。',
+            'q2-2-3': '【解説】マネタリーベース（ベースマネー）は、日銀が供給する通貨量です。',
+            'q2-3': '【解説】日本企業は借入比率が高く（45%）、米国企業は株式等の比率が高い（41%）のが特徴です。',
+            'q2-4': '【解説】信用創造額 = 本源的預金 ÷ 準備率 - 本源的預金 = 300 ÷ 0.1 - 300 = 3000 - 300 = 2700億円',
+            'q2-5': '【解説】M1（狭義のマネーサプライ）= 現金通貨 + 預金通貨',
+
+            // セクション III の解説
+            'q3-1-a': '【解説】財政法は1947年に施行され、国債発行の原則禁止を定めています。',
+            'q3-1-i': '【解説】財政法第4条で建設国債の発行が認められています。',
+            'q3-1-u': '【解説】公共事業費などに限って建設国債の発行が認められています。',
+            'q3-1-e': '【解説】2022年度予算で最大の歳出項目は社会保障関係費です。',
+            'q3-1-o': '【解説】国債費は国債の元本償還と利払いに充てられる費用です。',
+            'q3-1-ka': '【解説】地方交付税交付金等は歳出の3番目に大きな項目です。',
+            'q3-2-1': '【解説】特例国債は赤字国債とも呼ばれます。',
+            'q3-2-2': '【解説】市場消化の原則とは、国債を市場で発行することを原則とすることです。',
+            'q3-2-3': '【解説】地方公共団体が発行する債券を地方債といいます。',
+            'q3-2-4': '【解説】固定資産税は市町村の主要な税収です。',
+            'q3-3': '【模範解答】建設国債で建設された社会資本は将来世代も利用するため、将来世代にも負担を求めることが世代間の公平の観点から妥当だから。\n【解説】建設国債は公共事業など将来に残る資産の建設に使われるため、その利益を受ける将来世代も負担することが公平とされています。',
+            'q3-4': '【模範解答】地方交付税交付金は使途が自由だが、国庫支出金は使途が特定されており国の施策に従って使用しなければならない。\n【解説】地方交付税は地方の一般財源として自由に使えますが、国庫支出金は特定の事業のために交付され使途が限定されています。'
+        };
+
+        // 問題をセクションに振り分け
+        questions.forEach(q => {
+            if (q.section === 'I') {
+                sections[0].questions.push(q);
+            } else if (q.section === 'II') {
+                sections[1].questions.push(q);
+            } else if (q.section === 'III') {
+                sections[2].questions.push(q);
+            }
+        });
+
+        // 状態管理
+        let currentSection = 0;
+        let userAnswers = {};
+        let startTime = Date.now();
+        let timerInterval;
+
+        // 初期化
+        function init() {
+            renderSectionNav();
+            renderSection();
+            startTimer();
+        }
+
+        // セクション一覧を表示
+        function renderSectionNav() {
+            const nav = document.getElementById('sectionNav');
+            nav.innerHTML = '';
+            sections.forEach((section, index) => {
+                const item = document.createElement('div');
+                item.className = 'section-nav-item';
+                if (index === currentSection) {
+                    item.classList.add('current');
+                }
+                item.textContent = section.title.split(':')[0]; // "[I]" や "[II]" だけ表示
+                item.onclick = () => goToSection(index);
+                nav.appendChild(item);
+            });
+        }
+
+        // セクションに移動
+        function goToSection(index) {
+            currentSection = index;
+            renderSection();
+            renderSectionNav();
+        }
+
+        // セクションを表示（本文と問題を2カラムで）
+        function renderSection() {
+            const section = sections[currentSection];
+
+            // 左カラム：本文
+            const passageColumn = document.getElementById('passageColumn');
+            passageColumn.innerHTML = `
+                <div class="passage-header">${section.title}</div>
+                <div class="passage-content">
+                    <div class="passage">${section.passage}</div>
+                </div>
+            `;
+
+            // 右カラム：問題
+            const questionsContainer = document.getElementById('questionsContainer');
+            let questionsHTML = '';
+
+            section.questions.forEach((q, index) => {
+                questionsHTML += `<div class="question-item">`;
+                questionsHTML += `<div class="question-title">${q.title}</div>`;
+                questionsHTML += `<div class="question-text">${q.question}</div>`;
+
+                // 選択肢記述式（複数の小問がある大問）
+                if (q.type === '選択肢記述式' && q.blanks) {
+                    q.blanks.forEach(blank => {
+                        const value = userAnswers[blank.id] || '';
+                        questionsHTML += `
+                            <div style="margin: 15px 0;">
+                                <strong>${blank.label}:</strong>
+                                <input type="text" id="answer-${blank.id}" value="${value}" oninput="updateTextAnswer('${blank.id}')" placeholder="アルファベットを入力" style="width: 100px; margin-left: 10px;">
+                            </div>
+                        `;
+                    });
+                }
+                // 共通空欄記述式（全て同じ答えの複数空欄）
+                else if (q.type === '共通空欄記述式' && q.blanks) {
+                    q.blanks.forEach(blank => {
+                        const value = userAnswers[blank.id] || '';
+                        questionsHTML += `
+                            <div style="margin: 15px 0;">
+                                <strong>${blank.label}の空欄:</strong>
+                                <input type="text" id="answer-${blank.id}" value="${value}" oninput="updateTextAnswer('${blank.id}')" placeholder="語句を入力" style="width: 200px; margin-left: 10px;">
+                            </div>
+                        `;
+                    });
+                }
+                // 選択肢型（ラジオボタン）
+                else if (q.options && !q.multiSelect) {
+                    questionsHTML += '<div class="options">';
+                    q.options.forEach(opt => {
+                        const checked = userAnswers[q.id] === opt.value ? 'checked' : '';
+                        const selected = checked ? 'selected' : '';
+                        questionsHTML += `
+                            <div class="option ${selected}">
+                                <input type="radio" name="${q.id}" value="${opt.value}" ${checked} onchange="selectOption('${q.id}', '${opt.value}')">
+                                <label for="${q.id}-${opt.value}">${opt.value}. ${opt.label}</label>
+                            </div>
+                        `;
+                    });
+                    questionsHTML += '</div>';
+                }
+                // 複数選択式（チェックボックス）
+                else if (q.options && q.multiSelect) {
+                    questionsHTML += '<div class="options">';
+                    questionsHTML += '<p style="color: #1976d2; font-weight: bold; margin-bottom: 10px; font-size: 0.9em;">※複数選択可能</p>';
+                    const selectedValues = userAnswers[q.id] || [];
+                    q.options.forEach(opt => {
+                        const checked = selectedValues.includes(opt.value) ? 'checked' : '';
+                        const selected = checked ? 'selected' : '';
+                        questionsHTML += `
+                            <div class="option ${selected}">
+                                <input type="checkbox" name="${q.id}" value="${opt.value}" ${checked} onchange="selectMultipleOption('${q.id}', '${opt.value}')">
+                                <label>${opt.value}. ${opt.label}</label>
+                            </div>
+                        `;
+                    });
+                    questionsHTML += '</div>';
+                }
+                // 長文記述式（テキストエリア）
+                else if (q.maxLength) {
+                    const value = userAnswers[q.id] || '';
+                    questionsHTML += `
+                        <textarea id="answer-${q.id}" maxlength="${q.maxLength}" oninput="updateTextAnswer('${q.id}')" placeholder="ここに解答を記入してください">${value}</textarea>
+                        <div class="char-counter"><span id="counter-${q.id}">${value.length}</span>/${q.maxLength}字</div>
+                    `;
+                }
+                // テキスト入力（短い記述式）
+                else {
+                    const value = userAnswers[q.id] || '';
+                    const placeholder = q.type.includes('計算') ? '数値を入力してください' : '解答を入力してください';
+                    questionsHTML += `
+                        <input type="text" id="answer-${q.id}" value="${value}" oninput="updateTextAnswer('${q.id}')" placeholder="${placeholder}" style="width: 100%;">
+                    `;
+                }
+
+                questionsHTML += `</div>`;
+            });
+
+            questionsContainer.innerHTML = questionsHTML;
+        }
+
+        // 選択肢を選択（ラジオボタン）
+        function selectOption(questionId, value) {
+            userAnswers[questionId] = value;
+            // セクションを再レンダリングして選択状態を反映
+            renderSection();
+        }
+
+        // 複数選択肢を選択（チェックボックス）
+        function selectMultipleOption(questionId, value) {
+            if (!userAnswers[questionId]) {
+                userAnswers[questionId] = [];
+            }
+
+            const index = userAnswers[questionId].indexOf(value);
+            if (index > -1) {
+                userAnswers[questionId].splice(index, 1);
+            } else {
+                userAnswers[questionId].push(value);
+            }
+
+            // セクションを再レンダリングして選択状態を反映
+            renderSection();
+        }
+
+        // テキスト解答を更新
+        function updateTextAnswer(questionId) {
+            const input = document.getElementById(`answer-${questionId}`);
+            userAnswers[questionId] = input.value.trim();
+
+            const counter = document.getElementById(`counter-${questionId}`);
+            if (counter) {
+                counter.textContent = input.value.length;
+            }
+        }
+
+        // タイマー
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                const totalSeconds = 60 * 60; // 60分
+                const remaining = totalSeconds - elapsed;
+
+                if (remaining <= 0) {
+                    clearInterval(timerInterval);
+                    finishTest();
+                    return;
+                }
+
+                const minutes = Math.floor(remaining / 60);
+                const seconds = remaining % 60;
+                document.getElementById('timer').textContent =
+                    `⏱ ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        // 試験終了確認
+        function confirmFinish() {
+            // 総問題数を計算（選択肢記述式・共通空欄記述式の場合は小問数をカウント）
+            let total = 0;
+            questions.forEach(q => {
+                if ((q.type === '選択肢記述式' || q.type === '共通空欄記述式') && q.blanks) {
+                    total += q.blanks.length;
+                } else {
+                    total++;
+                }
+            });
+
+            const answered = Object.keys(userAnswers).length;
+            const unanswered = total - answered;
+
+            let message = `解答済み: ${answered}問 / 全${total}問\n`;
+            if (unanswered > 0) {
+                message += `未解答: ${unanswered}問\n\n`;
+                message += '未解答の問題がありますが、試験を終了しますか？';
+            } else {
+                message += '\nすべての問題に解答しました。試験を終了して採点しますか？';
+            }
+
+            if (confirm(message)) {
+                finishTest();
+            }
+        }
+
+        // 試験終了・採点
+        function finishTest() {
+            clearInterval(timerInterval);
+
+            let correct = 0;
+            let total = 0;
+            let resultHTML = '';
+
+            questions.forEach(q => {
+                // 選択肢記述式または共通空欄記述式の場合は各小問を採点
+                if ((q.type === '選択肢記述式' || q.type === '共通空欄記述式') && q.blanks) {
+                    q.blanks.forEach(blank => {
+                        total++;
+                        const userAnswer = userAnswers[blank.id] || '';
+                        const isCorrect = checkAnswerFlexible(
+                            String(userAnswer).trim().toUpperCase(),
+                            String(blank.answer).trim().toUpperCase()
+                        );
+                        if (isCorrect) correct++;
+
+                        resultHTML += generateResultItem({
+                            id: blank.id,
+                            title: `${q.title}-${blank.label}`,
+                            question: q.question,
+                            answer: blank.answer,
+                            type: q.type
+                        }, userAnswer, isCorrect);
+                    });
+                } else {
+                    total++;
+                    const userAnswer = userAnswers[q.id] || '';
+                    const isCorrect = checkAnswer(q, userAnswer);
+
+                    if (isCorrect) correct++;
+
+                    resultHTML += generateResultItem(q, userAnswer, isCorrect);
+                }
+            });
+
+            const percentage = ((correct / total) * 100).toFixed(1);
+
+            // 結果画面を表示
+            document.getElementById('examArea').style.display = 'none';
+            document.querySelector('.sidebar').style.display = 'none';
+
+            const resultScreen = document.getElementById('resultScreen');
+            resultScreen.style.display = 'block';
+
+            resultScreen.innerHTML = `
+                <div class="result-header">
+                    <h2>🎉 採点結果</h2>
+                    <div class="result-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">${correct} / ${total}</div>
+                            <div>正解数</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${percentage}%</div>
+                            <div>正答率</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${Math.floor((Date.now() - startTime) / 60000)}</div>
+                            <div>所要時間（分）</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="background: white; padding: 20px; border-radius: 12px;">
+                    <h3 style="color: #1976d2; margin-bottom: 20px;">📝 詳細な解答と解説</h3>
+                    ${resultHTML}
+                </div>
+            `;
+        }
+
+        // 解答チェック
+        function checkAnswer(question, userAnswer) {
+            if (!userAnswer) return false;
+
+            // 論述問題の場合
+            if (question.essayGrading) {
+                const result = gradeEssay(question, userAnswer);
+                return result.percentage >= 60;
+            }
+
+            // 複数選択問題の場合
+            if (question.multiSelect && Array.isArray(userAnswer)) {
+                const correctAnswer = question.answer;
+                // 単一の正解の場合
+                if (typeof correctAnswer === 'string') {
+                    return userAnswer.length === 1 && userAnswer[0] === correctAnswer;
+                }
+                // 複数の正解の場合
+                if (Array.isArray(correctAnswer)) {
+                    if (userAnswer.length !== correctAnswer.length) return false;
+                    return correctAnswer.every(ans => userAnswer.includes(ans));
+                }
+                return false;
+            }
+
+            // 通常の問題（テキスト入力）
+            const normalizedUser = String(userAnswer).trim().toUpperCase();
+            const normalizedCorrect = String(question.answer).trim().toUpperCase();
+
+            // 完全一致チェック
+            if (normalizedUser === normalizedCorrect) return true;
+
+            // 柔軟な採点（表記ゆれを考慮）
+            return checkAnswerFlexible(normalizedUser, normalizedCorrect);
+        }
+
+        // 柔軟な採点（表記ゆれを考慮）
+        function checkAnswerFlexible(userAnswer, correctAnswer) {
+            // 正規化（全角・半角、大文字・小文字、スペース除去）
+            const normalize = (str) => {
+                return str
+                    .replace(/[Ａ-Ｚａ-ｚ０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0))
+                    .replace(/\s+/g, '')
+                    .toUpperCase();
+            };
+
+            const normalizedUser = normalize(userAnswer);
+            const normalizedCorrect = normalize(correctAnswer);
+
+            // 完全一致
+            if (normalizedUser === normalizedCorrect) return true;
+
+            // 部分一致（キーワードが含まれているか）
+            const keywords = {
+                'マーシャル・プラン': ['マーシャル', 'プラン', 'MARSHALL'],
+                'マーシャルプラン': ['マーシャル', 'プラン', 'MARSHALL'],
+                'コメコン': ['コメコン', 'COMECON', '経済相互援助会議'],
+                'ベルリンの壁': ['ベルリン', '壁'],
+                'ベルリンノカベ': ['ベルリン', 'カベ'],
+                '第五福竜丸': ['第五福竜丸', '第5福竜丸', 'ダイゴフクリュウマル'],
+                'キューバ危機': ['キューバ', '危機'],
+                'キューバキキ': ['キューバ', 'キキ'],
+                '全欧安全保障協力会議': ['CSCE', '全欧', 'ゼンオウ', 'ヘルシンキ'],
+                '朝鮮戦争': ['朝鮮', '戦争', 'チョウセン'],
+                'チョウセンセンソウ': ['チョウセン', 'センソウ'],
+                'MSA協定': ['MSA', '相互防衛援助'],
+                'MSAキョウテイ': ['MSA'],
+                'サンフランシスコ平和条約': ['サンフランシスコ', '平和条約', '講和条約'],
+                'サンフランシスコヘイワジョウヤク': ['サンフランシスコ', 'ヘイワ'],
+                '事前協議': ['事前', '協議', 'ジゼン', 'キョウギ'],
+                'ジゼンキョウギ': ['ジゼン', 'キョウギ'],
+                '北大西洋条約機構': ['NATO', '北大西洋', 'キタタイセイヨウ'],
+                'キタタイセイヨウジョウヤクキコウ': ['キタタイセイヨウ'],
+                '歯舞群島と色丹島': ['歯舞', '色丹', 'ハボマイ', 'シコタン'],
+                'ハボマイグントウトシコタントウ': ['ハボマイ', 'シコタン'],
+                'コーポレートガバナンス': ['コーポレート', 'ガバナンス', '企業統治'],
+                'ベンチャーキャピタル': ['ベンチャー', 'キャピタル'],
+                'マネタリーベース': ['マネタリー', 'ベース', 'ベースマネー'],
+                '地方債': ['地方債', 'チホウサイ'],
+                'チホウサイ': ['チホウ', 'サイ'],
+                '固定資産税': ['固定資産税', 'コテイシサンゼイ'],
+                'コテイシサンゼイ': ['コテイ', 'シサン', 'ゼイ']
+            };
+
+            if (keywords[correctAnswer] || keywords[normalizedCorrect]) {
+                const keywordList = keywords[correctAnswer] || keywords[normalizedCorrect];
+                return keywordList.some(keyword =>
+                    normalizedUser.includes(normalize(keyword))
+                );
+            }
+
+            return false;
+        }
+
+        // 論述問題の採点
+        function gradeEssay(question, userAnswer) {
+            const grading = question.essayGrading;
+            let score = 0;
+            const foundKeywords = [];
+            const missingKeywords = [];
+
+            // 文字数チェック
+            if (userAnswer.length >= grading.minLength && userAnswer.length <= question.maxLength) {
+                score += 1;
+            }
+
+            // 必須キーワード
+            grading.requiredKeywords.forEach(keyword => {
+                if (userAnswer.includes(keyword)) {
+                    foundKeywords.push(keyword);
+                    score += 1;
+                } else {
+                    missingKeywords.push(keyword);
+                }
+            });
+
+            // オプションキーワード
+            grading.optionalKeywords.forEach(keyword => {
+                if (userAnswer.includes(keyword)) {
+                    foundKeywords.push(keyword);
+                    score += 0.5;
+                }
+            });
+
+            score = Math.min(score, grading.maxScore);
+
+            return {
+                score: score,
+                maxScore: grading.maxScore,
+                percentage: ((score / grading.maxScore) * 100).toFixed(1),
+                foundKeywords: foundKeywords,
+                missingKeywords: missingKeywords
+            };
+        }
+
+        // 結果項目を生成
+        function generateResultItem(question, userAnswer, isCorrect) {
+            let bgColor, icon, statusText;
+
+            if (question.essayGrading) {
+                const result = gradeEssay(question, userAnswer);
+                if (result.percentage >= 80) {
+                    bgColor = '#e8f5e9';
+                    icon = '🌟';
+                    statusText = `優秀 (${result.percentage}%)`;
+                } else if (result.percentage >= 60) {
+                    bgColor = '#fff3e0';
+                    icon = '✅';
+                    statusText = `合格 (${result.percentage}%)`;
+                } else {
+                    bgColor = '#ffebee';
+                    icon = '📝';
+                    statusText = `要改善 (${result.percentage}%)`;
+                }
+
+                return `
+                    <div style="background: ${bgColor}; padding: 20px; margin-bottom: 20px; border-radius: 8px; border-left: 4px solid #1976d2;">
+                        <div style="font-weight: bold; font-size: 1.1em; margin-bottom: 10px;">
+                            ${icon} ${question.title} - ${statusText}
+                        </div>
+                        <div style="margin: 10px 0;"><strong>あなたの解答:</strong></div>
+                        <div style="background: white; padding: 15px; border-radius: 5px; margin: 10px 0;">
+                            ${userAnswer || '(未記入)'}
+                        </div>
+                        <div style="margin: 15px 0; padding: 15px; background: rgba(255,255,255,0.8); border-radius: 5px;">
+                            <div style="font-size: 1.1em; color: #1976d2; font-weight: bold; margin-bottom: 10px;">
+                                📊 得点: ${result.score} / ${result.maxScore}点
+                            </div>
+                            <div style="margin: 5px 0;">✅ 含まれているキーワード: ${result.foundKeywords.join('、') || 'なし'}</div>
+                            <div style="margin: 5px 0;">❌ 不足しているキーワード: ${result.missingKeywords.join('、') || 'なし'}</div>
+                        </div>
+                        <div style="margin-top: 15px; padding: 15px; background: rgba(255,255,255,0.7); border-radius: 5px;">
+                            <div><strong>模範解答:</strong></div>
+                            <div style="margin-top: 5px;">${question.answer}</div>
+                            <div style="margin-top: 10px; color: #666;">${explanations[question.id] || ''}</div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                bgColor = isCorrect ? '#e8f5e9' : '#ffebee';
+                icon = isCorrect ? '✅' : '❌';
+                statusText = isCorrect ? '正解' : '不正解';
+
+                return `
+                    <div style="background: ${bgColor}; padding: 20px; margin-bottom: 20px; border-radius: 8px; border-left: 4px solid ${isCorrect ? '#4caf50' : '#f44336'};">
+                        <div style="font-weight: bold; font-size: 1.1em; margin-bottom: 10px;">
+                            ${icon} ${question.title} - ${statusText}
+                        </div>
+                        <div style="margin: 10px 0;"><strong>あなたの解答:</strong> ${userAnswer || '(未回答)'}</div>
+                        <div style="margin: 10px 0; color: #1976d2;"><strong>正解:</strong> ${question.answer}</div>
+                        <div style="margin-top: 15px; padding: 15px; background: rgba(255,255,255,0.7); border-radius: 5px;">
+                            ${explanations[question.id] || ''}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // ページ読み込み時に初期化
+        window.onload = init;
+    </script>
+</body>
+</html>
